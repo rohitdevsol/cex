@@ -28,10 +28,10 @@ serde_json = "1"
 dotenvy = "0.15"
 
 # config management
-figment = { version = "0.10", features = ["toml", "env"] }
+figment = { version = "0.10", features = [ "env"] }
 
 # database
-sqlx = { version = "0.7", features = [
+sqlx = { version = "0.8", default-features = false,features = [
     "postgres",
     "uuid",
     "time",

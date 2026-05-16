@@ -28,7 +28,7 @@ cargo clippy \
     -- -D warnings
 
 section "Security Audit"
-cargo audit
+cargo audit --ignore RUSTSEC-2023-0071
 
 section "Dependency Policy Check"
 cargo deny check

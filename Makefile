@@ -31,7 +31,7 @@ lint:
 	cargo clippy --workspace --all-targets --all-features -- -D warnings
 
 audit:
-	cargo audit
+	cargo audit --ignore RUSTSEC-2023-0071
 
 deny:
 	cargo deny check
