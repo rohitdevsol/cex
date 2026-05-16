@@ -1,63 +1,188 @@
 # CEX | Centralized Exchange
 
-A high-performance, distributed, and observable Centralized Exchange built in **20 Days**.
+Production-oriented centralized exchange backend built in Rust.
 
-## 🚀 The Endgoal
-A production-grade, distributed CEX with a matching engine, real-time settlement, WebSocket gateways, and a full Kubernetes deployment with observability.
+## Current Status
 
-### Architecture Overview
+Currently building the foundation layer:
+- Rust workspace architecture
+- Actix Web API
+- SQLx integration
+- PostgreSQL migrations
+- structured logging
+- CI/CD workflows
+- verification tooling
+- developer automation
+
+---
+
+# Planned Architecture
+
 ```mermaid
 graph TD
-    User((External User))
-    Gateway[Nginx API Gateway]
+    Client((Client))
+
+    Gateway[API Gateway]
     Auth[Auth Service]
     Order[Order Service]
     Risk[Risk Engine]
-    Engine[Matching Engine]
-    Wallet[Wallet Service]
+    Match[Matching Engine]
     Balance[Balance Service]
+    Wallet[Wallet Service]
     WS[WS Gateway]
-    Kafka{Kafka Bus}
-    Redis[(Redis Cache)]
-    DB[(Postgres/Timescale)]
 
-    User --> Gateway
-    Gateway -- Auth Sub-request --> Auth
+    Kafka{Kafka / NATS}
+    Redis[(Redis)]
+    PG[(Postgres)]
+
+    Client --> Gateway
+
+    Gateway --> Auth
     Gateway --> Order
-    Order -- Check --> Risk
-    Risk -- Balances --> Redis
-    Order -- orders.new --> Kafka
-    Kafka -- orders.new --> Engine
-    Engine -- trades.executed --> Kafka
-    Engine -- snapshots --> Redis
-    Kafka -- trades.executed --> Wallet
-    Wallet -- settles --> DB
-    Wallet -- balance.updated --> Kafka
-    Kafka -- balance.updated --> Balance
-    Balance -- cache --> Redis
-    WS -- sub --> Redis
-    WS -- push --> User
+    Gateway --> Balance
+    Gateway --> Wallet
+    Gateway --> WS
+
+    Order --> Risk
+    Order --> Kafka
+
+    Kafka --> Match
+    Match --> Kafka
+
+    Kafka --> Wallet
+    Kafka --> Balance
+    Kafka --> WS
+
+    Wallet --> PG
+    Balance --> PG
+    Order --> PG
+    Auth --> PG
+
+    Balance --> Redis
+    Match --> Redis
 ```
 
-## 🏗️ Technical Roadmap
+---
 
-The project follows a 5-phase execution plan:
+# Roadmap
 
-| Phase | Title | Focus | Timeline |
-| :--- | :--- | :--- | :--- |
-| **P1** | **Shared Foundation** | Crate structure, DB schema, Kafka/Redis setup. | Days 1–4 |
-| **P2** | **Trading Core** | Order book logic, Matching Engine (Rust), Risk Engine. | Days 5–9 |
-| **P3** | **Finance + Comms** | Wallets, Balances, Auth, and WebSocket gateways. | Days 10–14 |
-| **P4** | **Public API + UI** | Nginx Gateway, Public Endpoints, Next.js Terminal. | Days 15–17 |
-| **P5** | **K8s + Ops** | Kubernetes, Helm, Prometheus, CI/CD. | Days 18–20 |
-
-## 🛠️ Stack
-- **Core**: Rust (Tokio, Axum, sqlx, rdkafka)
-- **Database**: Postgres + TimescaleDB (Time-series trades)
-- **Infrastructure**: Kafka (Event bus), Redis (Low-latency cache/PubSub)
-- **Frontend**: Next.js (Trading terminal)
-- **Deployment**: Kubernetes + ArgoCD (GitOps)
-- **Observability**: Prometheus, Grafana, Loki, Jaeger
+| Phase | Focus |
+|---|---|
+| P0 | Workspace, tooling, SQLx, migrations |
+| P1 | Authentication + user system |
+| P2 | Balance + ledger engine |
+| P3 | Matching engine + orderbook |
+| P4 | Trade settlement |
+| P5 | Redis integration |
+| P6 | WebSocket infrastructure |
+| P7 | Service separation |
+| P8 | Event-driven architecture |
+| P9 | Risk engine |
+| P10 | Production hardening |
 
 ---
-*This README represents the endgoal of the 20-day intensive CEX build.*
+
+# Stack
+
+## Backend
+- Rust
+- Tokio
+- Actix Web
+- SQLx
+- Tracing
+
+## Database
+- PostgreSQL
+
+## Infrastructure
+- Redis
+- Kafka / NATS
+
+## Observability
+- Prometheus
+- Grafana
+- Loki
+- Jaeger
+
+## Deployment
+- Docker
+- Kubernetes
+- GitHub Actions
+
+---
+
+# Repository Structure
+
+```text
+cex/
+├── apps/
+│   └── api/
+│
+├── crates/
+│   ├── config/
+│   ├── db/
+│   ├── errors/
+│   └── types/
+│
+├── migrations/
+├── scripts/
+├── docker/
+└── .github/
+```
+
+---
+
+# Setup
+
+## Initialize Repository
+
+```bash
+make setup
+```
+
+## Start Infrastructure
+
+```bash
+docker compose up -d
+```
+
+## Run Migrations
+
+```bash
+make migrate
+```
+
+## Run API
+
+```bash
+make run
+```
+
+---
+
+# Verification
+
+## Auto Fixes
+
+```bash
+make fix
+```
+
+## Full Verification
+
+```bash
+make verify
+```
+
+---
+
+# Standards
+
+Repository checks include:
+- formatting
+- clippy
+- tests
+- dependency audits
+- license checks
+- git hooks
+- CI verification
