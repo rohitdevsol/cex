@@ -1,3 +1,9 @@
-/target
-**/target
-Cargo.lock
+target/
+.env
+.sqlx/
+coverage/
+dist/
+tmp/
+.DS_Store
+.idea/
+.vscode/
